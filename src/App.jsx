@@ -446,7 +446,10 @@ export default function App(){
           onAuxClick={e=>{if(e.button===1)e.preventDefault();}}
           onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}
           style={{width:dim.w,height:dim.h,display:"block",touchAction:"none",cursor:dragSt?"grabbing":panSt?"move":"default"}}/>
-        <div onTouchStart={e=>{e.stopPropagation();setPlay(p=>!p);}} onClick={()=>setPlay(p=>!p)}
+        <div
+          onTouchStart={e=>{e.stopPropagation();}}
+          onTouchEnd={e=>{e.preventDefault();e.stopPropagation();setPlay(p=>!p);}}
+          onClick={()=>setPlay(p=>!p)}
           style={{position:"absolute",left:0,top:rsiPos.top,width:56,height:rsiPos.height,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",zIndex:5}}>
           <div style={{width:36,height:36,borderRadius:8,background:play?"rgba(239,51,64,0.15)":"rgba(0,200,83,0.15)",border:`1.5px solid ${play?T.red:T.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:play?T.red:T.green}}>
             {play?"⏸":"▶"}
