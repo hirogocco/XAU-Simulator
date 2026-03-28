@@ -48,7 +48,7 @@ export default function App(){
   const[spd,setSpd]=useState(80);
   const[vis,setVis]=useState(30);
   const[yZoom,setYZoom]=useState(1.0);
-  const[showBB,setShowBB]=useState(true);
+  const[showBB,setShowBB]=useState(false);
   const[showSAR,setShowSAR]=useState(false);
   const[showAutoTL,setShowAutoTL]=useState(true);
   const[pendingPt,setPendingPt]=useState(null);
@@ -430,7 +430,7 @@ export default function App(){
         <Btn c={T.text} onClick={()=>{if(!d1m)return;const cur=Math.floor(d1m[idx].time/900000);let n=idx+1;while(n<d1m.length&&Math.floor(d1m[n].time/900000)===cur)n++;setIdx(Math.min(n,d1m.length-1));}}>→15m</Btn>
         <Btn c={T.text} onClick={()=>{setIdx(0);setPlay(false);}}>⏮</Btn>
         <Sep/><Lb>速度</Lb><input type="range" min={5} max={500} value={spd} onChange={e=>setSpd(+e.target.value)} style={{width:60,accentColor:T.forming}}/><Lb>{spd}ms</Lb>
-        <Sep/><Lb>表示</Lb><input type="range" min={20} max={120} value={vis} onChange={e=>setVis(+e.target.value)} style={{width:50,accentColor:T.forming}}/><Lb>{vis}</Lb>
+        <Sep/><Lb>表示</Lb><input type="range" min={20} max={60} value={vis} onChange={e=>setVis(+e.target.value)} style={{width:50,accentColor:T.forming}}/><Lb>{vis}</Lb>
         <Sep/><Lb>Y軸</Lb><input type="range" min={50} max={500} value={yZoom*100} onChange={e=>setYZoom(+e.target.value/100)} style={{width:55,accentColor:T.forming}}/><Lb>{yZoom.toFixed(1)}x</Lb>
         <Btn c={T.text} onClick={()=>{setYZoom(1.0);setPanOff({x:0,y:0});}}>reset</Btn>
       </div>
