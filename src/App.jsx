@@ -178,10 +178,9 @@ export default function App(){
       const t=e.touches[0];const mx=t.clientX-rect.left,my=t.clientY-rect.top;
       // Check handle first
       const h=findHandle(mx,my);
-      if(h){e.preventDefault();setDragSt(h);setMagPos({x:mx,y:my});touchStartRef.current=null;return;}
+      if(h){e.preventDefault();setDragSt(h);if(h.type==="mline"&&(h.handle==="p1"||h.handle==="p2"))setMagPos({x:mx,y:my});touchStartRef.current=null;return;}
       // Start long press timer
       touchStartRef.current={x:t.clientX,y:t.clientY,mx,my,moved:false,startPan:{...panOff}};
-      setMagPos({x:mx,y:my});
       longPressRef.current=setTimeout(()=>{
         if(touchStartRef.current&&!touchStartRef.current.moved){
           placeAction(touchStartRef.current.mx,touchStartRef.current.my);
@@ -205,7 +204,7 @@ export default function App(){
       e.preventDefault();
       const t=e.touches[0];const rect=cvRef.current.getBoundingClientRect();
       const mx=t.clientX-rect.left,my=t.clientY-rect.top;
-      setMagPos({x:mx,y:my});
+      if(dragSt.type==="mline"&&(dragSt.handle==="p1"||dragSt.handle==="p2"))setMagPos({x:mx,y:my});
       applyDrag(mx,my,dragSt);return;
     }
     if(e.touches.length===1&&touchStartRef.current){
