@@ -68,6 +68,7 @@ export default function App(){
   const touchStartRef=useRef(null);
   const pinchRef=useRef(null);
   const[dim,setDim]=useState(()=>{const w=Math.min(typeof window!=="undefined"?window.innerWidth:375,920);return{w,h:Math.floor(Math.min(760,Math.max(400,w*0.75)))};});
+  const[rsiPos,setRsiPos]=useState({top:0,height:60});
 
   useEffect(()=>{(async()=>{try{const json=await decompressB64(PRESET_B64);const arr=JSON.parse(json);const bars=parsePreset(arr);if(bars.length){setD1m(bars);setIdx(Math.min(90,bars.length-1));}}catch(e){console.error("Preset fail",e);}setLoading(false);})();},[]);
   useEffect(()=>{const ro=new ResizeObserver(e=>{const w=Math.floor(e[0].contentRect.width);const vh=window.innerHeight;const h=Math.floor(Math.min(vh*0.72,Math.max(300,w*0.75)));setDim({w,h});});if(boxRef.current)ro.observe(boxRef.current);return()=>ro.disconnect();},[]);
@@ -303,6 +304,7 @@ export default function App(){
     const pY=v=>pT+pH-((v-pMin)/(pMax-pMin))*pH;
     const rY=v=>rT+rH-(v/100)*rH;
     dp.current={rT,rH,pT,padL:pad.l,drawW,bW,st,vis};
+    setRsiPos({top:rT,height:rH});
 
     // Grid
     ctx.strokeStyle=T.grid;ctx.lineWidth=0.5;ctx.font="10px monospace";ctx.fillStyle=T.text;ctx.textAlign="right";
@@ -423,7 +425,7 @@ export default function App(){
         <label style={{fontSize:11,color:T.forming,cursor:"pointer"}}><span style={{background:"rgba(68,138,255,0.1)",padding:"3px 10px",borderRadius:4,border:`1px solid ${T.forming}33`}}>1分足 CSV</span><input type="file" accept=".csv,.txt" onChange={onFile} style={{display:"none"}}/></label>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:4,padding:"4px 12px",borderBottom:`1px solid ${T.border}`,flexWrap:"wrap",fontSize:11}}>
-        <Btn c={play?T.red:T.green} onClick={()=>setPlay(p=>!p)}>{play?"⏸":"▶"}</Btn>
+        <Btn c={T.text} onClick={()=>setIdx(i=>Math.max(i-1,0))}>←1</Btn>
         <Btn c={T.text} onClick={()=>setIdx(i=>Math.min(i+1,maxIdx))}>→1</Btn>
         <Btn c={T.text} onClick={()=>{if(!d1m)return;const cur=Math.floor(d1m[idx].time/900000);let n=idx+1;while(n<d1m.length&&Math.floor(d1m[n].time/900000)===cur)n++;setIdx(Math.min(n,d1m.length-1));}}>→15m</Btn>
         <Btn c={T.text} onClick={()=>{setIdx(0);setPlay(false);}}>⏮</Btn>
@@ -444,6 +446,12 @@ export default function App(){
           onAuxClick={e=>{if(e.button===1)e.preventDefault();}}
           onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}
           style={{width:dim.w,height:dim.h,display:"block",touchAction:"none",cursor:dragSt?"grabbing":panSt?"move":"default"}}/>
+        <div onTouchStart={e=>{e.stopPropagation();setPlay(p=>!p);}} onClick={()=>setPlay(p=>!p)}
+          style={{position:"absolute",left:0,top:rsiPos.top,width:56,height:rsiPos.height,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",zIndex:5}}>
+          <div style={{width:36,height:36,borderRadius:8,background:play?"rgba(239,51,64,0.15)":"rgba(0,200,83,0.15)",border:`1.5px solid ${play?T.red:T.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:play?T.red:T.green}}>
+            {play?"⏸":"▶"}
+          </div>
+        </div>
         {magPos&&(
           <canvas ref={magRef} style={{position:"absolute",top:8,left:8,width:110,height:110,borderRadius:"50%",pointerEvents:"none",boxShadow:"0 2px 12px rgba(0,0,0,0.7)"}}/>
         )}
