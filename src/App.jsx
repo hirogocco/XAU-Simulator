@@ -443,13 +443,20 @@ export default function App(){
     setMagPos(null);
     if(dragSt){setDragSt(null);return;}
     if(longPressRef.current){clearTimeout(longPressRef.current);longPressRef.current=null;}
-    // Tap detection (for line deletion)
+    // Tap detection
     if(touchStartRef.current&&!touchStartRef.current.moved&&e.changedTouches.length>0){
-      const hit=findLineHit(touchStartRef.current.mx,touchStartRef.current.my);
-      if(hit)setCtxMenu({x:touchStartRef.current.mx,y:touchStartRef.current.my,...hit});
+      const mx=touchStartRef.current.mx,my=touchStartRef.current.my;
+      const d=dp.current;
+      // If 1st point is pending and tap is in RSI panel → place 2nd point
+      if(pendingPt&&d.rT&&my>=d.rT&&my<=d.rT+d.rH&&mx>=d.padL&&mx<=d.padL+d.drawW){
+        placeAction(mx,my);
+      }else{
+        const hit=findLineHit(mx,my);
+        if(hit)setCtxMenu({x:mx,y:my,...hit});
+      }
     }
     touchStartRef.current=null;pinchRef.current=null;
-  },[dragSt,findLineHit]);
+  },[dragSt,findLineHit,pendingPt,placeAction]);
 
   const onMenuDel=useCallback(()=>{
     if(!ctxMenu)return;
