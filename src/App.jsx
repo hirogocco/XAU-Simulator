@@ -231,7 +231,7 @@ export default function App(){
   const[yZoom,setYZoom]=useState(1.0);
   const[boostMult,setBoostMult]=useState(4);
   const[boosting,setBoosting]=useState(false);
-  const[showBB,setShowBB]=useState(true);
+  const[showBB,setShowBB]=useState(false);
   const[showSAR,setShowSAR]=useState(false);
   const[showAutoTL,setShowAutoTL]=useState(true);
   const[pendingPt,setPendingPt]=useState(null);
